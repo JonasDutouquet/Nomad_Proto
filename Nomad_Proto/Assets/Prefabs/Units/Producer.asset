@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6411531b06a6c4bed9090e34780aeb56, type: 3}
+  m_Name: Producer
+  m_EditorClassIdentifier: 
+  display: {fileID: 1978367586263346, guid: 496272203d24a469fbac18f35a66ee3b, type: 2}
+  actions:
+  - {fileID: 11400000, guid: e335bb2d3b06648ca994deff41402478, type: 2}
+  - {fileID: 11400000, guid: b74d463340d634b1ab2fd352639671b8, type: 2}
+  - {fileID: 11400000, guid: 191c8e990d2a9431ab473cd13f071c59, type: 2}
+  - {fileID: 11400000, guid: 72270e196705a4a008c5652aecd1552a, type: 2}
+  hunger: 1
+  arrowRange: 0
+  productionBase: 2
+  productionBonus: 2
+  speed: 2
+  visionRange: 0
+  selectedColor: {r: 0.12716262, g: 0.42592183, b: 0.7205882, a: 1}
