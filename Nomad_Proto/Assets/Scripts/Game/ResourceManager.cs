@@ -8,6 +8,7 @@ public class ResourceManager : MonoBehaviour
 {
 	[SerializeField] private HexGrid _grid;
 	[SerializeField] private float _techPointCost = 10;
+	[SerializeField] private int _riskPerTurn = 5;
 
 	[Header("UI")]
 	[SerializeField] private Text _food;
@@ -15,22 +16,35 @@ public class ResourceManager : MonoBehaviour
 	[SerializeField] private Text _techPoints;
 	[SerializeField] private Image _currentTechStatus;
 	[SerializeField] private Image _nextTechStatus;
+	[SerializeField] private Text _risk;
+	[SerializeField] private Text _penalty;
 
 	private int _foodProduced, _foodNeeded;
 	private float _researchStatus = 0;
-	private int _techPointsCount;
+	private int _riskStatus = 0;
+	private int _techPointsCount, _extraRisk;
+
 	private int ResearchProduced
 	{
 		get{
+			_extraRisk = 0;
 			int extra = _foodProduced - _foodNeeded;
-			return extra > 0 ? extra : 0;
+			if(extra > 0)
+			{
+				return extra;
+			}
+			else 
+			{
+				_extraRisk -= extra;
+				return 0;
+			}
 		}
 	}
 
-	private float NextResearchCount
+	private int RiskProduced
 	{
 		get{
-			return _researchStatus + ResearchProduced;
+			return _riskPerTurn + _extraRisk;
 		}
 	}
 
@@ -56,9 +70,12 @@ public class ResourceManager : MonoBehaviour
 
 		//update tech points
 		_currentTechStatus.fillAmount = (_researchStatus / _techPointCost);
-		_nextTechStatus.fillAmount = (NextResearchCount / _techPointCost);
-
+		_nextTechStatus.fillAmount = (_researchStatus + ResearchProduced) / _techPointCost;
 		_techPoints.text = _techPointsCount.ToString ();
+
+		//update risk
+		_risk.text = _riskStatus + _extraRisk + "% (+" + RiskProduced + "%)";
+		_penalty.text = "(" + _extraRisk + "% penalty)";
 	}
 
 	public void DoubleFood (int extraFood)
@@ -77,8 +94,12 @@ public class ResourceManager : MonoBehaviour
 			_techPointsCount += 1;
 		}
 
-		//reset food
+		//update risk
+		_riskStatus += RiskProduced;
+			
 		SetResource ();
+
+		//CALL RISK MANAGER PASSING RISK STATUS
 	}
 
 	public void SetResource()
@@ -92,6 +113,7 @@ public class ResourceManager : MonoBehaviour
 	{
 		writer.Write ((byte)_researchStatus);
 		writer.Write ((byte)_techPointsCount);
+		writer.Write ((byte)_riskStatus);
 	}
 
 	public void Load (BinaryReader reader, int header)
@@ -100,8 +122,12 @@ public class ResourceManager : MonoBehaviour
 		{
 			_researchStatus = reader.ReadByte ();
 			_techPointsCount = reader.ReadByte ();
-
-			SetResource ();
 		}
+		if(header >= 9)
+		{
+			_riskStatus = reader.ReadByte ();
+		}
+
+		SetResource ();
 	}
 }

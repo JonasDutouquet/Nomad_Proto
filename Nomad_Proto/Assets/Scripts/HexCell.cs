@@ -13,7 +13,6 @@ public class HexCell : MonoBehaviour {
 	private int _resourceAmount = 0;
 	private GameObject[] _resources = new GameObject[3];
 	public static GameObject resourcePrefab;
-	public static GameObject arrowPrefab;
 	private float _offset = 0.5f;
 
 	public void AddRessource()
@@ -309,6 +308,8 @@ public class HexCell : MonoBehaviour {
 	public HexUnit Unit { get; set; }
 
 	public ScoutArrow Arrow { get; set;}
+
+	public MemoryPillar Pillar { get; set;}
 
 	public HexCell PathFrom { get; set; }
 

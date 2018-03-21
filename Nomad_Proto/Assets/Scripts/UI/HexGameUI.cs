@@ -9,8 +9,8 @@ public class HexGameUI : MonoBehaviour {
 	[SerializeField] private TurnManager _turnMan;
 	[SerializeField] private HexMapEditor _hexMap;
 	[SerializeField] private HexMapCamera _camera;
-	[SerializeField] private GameObject _arrowPrefab;
-	[SerializeField] private GameObject _resourcePrefab;
+	//[SerializeField] private GameObject _arrowPrefab;
+	//[SerializeField] private GameObject _resourcePrefab;
 	private bool[] _actionEnable;
 	private bool _inAction = false;
 	private UnitAction _currentAction;
@@ -23,8 +23,8 @@ public class HexGameUI : MonoBehaviour {
 	void Awake()
 	{
 		_actionEnable = new bool[System.Enum.GetValues(typeof(ActionTypes)).Length];
-		HexCell.resourcePrefab = _resourcePrefab;
-		HexCell.arrowPrefab = _arrowPrefab;
+		//HexCell.resourcePrefab = _resourcePrefab;
+		//HexCell.arrowPrefab = _arrowPrefab;
 	}
 
 	public HexUnit SelectedUnit

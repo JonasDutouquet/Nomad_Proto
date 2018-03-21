@@ -15,7 +15,9 @@ public class HexGrid : MonoBehaviour {
 	public Text cellLabelPrefab;
 	public HexGridChunk chunkPrefab;
 	public HexUnit unitPrefab;
+	public GameObject resourcePrefab;
 	public ScoutArrow arrowPrefab;
+	public MemoryPillar pillarPrefab;
 	public UnitData fighterData;
 	public UnitData producerData;
 	public UnitData relicData;
@@ -48,6 +50,7 @@ public class HexGrid : MonoBehaviour {
 
 	List<HexUnit> units = new List<HexUnit>();
 	List<ScoutArrow> arrows = new List<ScoutArrow> ();
+	List<MemoryPillar> pillars = new List<MemoryPillar> ();
 
 	HexCellShaderData cellShaderData;
 
@@ -55,7 +58,9 @@ public class HexGrid : MonoBehaviour {
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
 		HexUnit.unitPrefab = unitPrefab;
+		HexCell.resourcePrefab = resourcePrefab;
 		ScoutArrow.arrowPrefab = arrowPrefab;
+		MemoryPillar.pillarPrefab = pillarPrefab;
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		cellShaderData.Grid = this;
 		CreateMap(cellCountX, cellCountZ, wrapping);
@@ -97,6 +102,20 @@ public class HexGrid : MonoBehaviour {
 	{
 		arrows.Remove (arrow);
 		arrow.Die ();
+	}
+
+	public void AddPillar(MemoryPillar pillar, HexCell location, int range)
+	{
+		pillars.Add (pillar);
+		pillar.Grid = this;
+		pillar.VisionRange = range;
+		pillar.Location = location;
+	}
+
+	public void RemovePillar(MemoryPillar pillar)
+	{
+		pillars.Remove (pillar);
+		pillar.Die ();
 	}
 
 	public void ClearArrows()
@@ -312,6 +331,11 @@ public class HexGrid : MonoBehaviour {
 		for (int i = 0; i < arrows.Count; i++) {
 			arrows[i].Save(writer);
 		}
+
+		writer.Write (pillars.Count);
+		for (int i = 0; i < pillars.Count; i++) {
+			pillars[i].Save(writer);
+		}
 	}
 
 	public void Load (BinaryReader reader, int header) {
@@ -352,6 +376,14 @@ public class HexGrid : MonoBehaviour {
 			int arrowCount = reader.ReadInt32 ();
 			for (int i = 0; i < arrowCount; i++) {
 				ScoutArrow.Load(reader, this);
+			}
+		}
+
+		if(header >= 10)
+		{
+			int pillarCount = reader.ReadInt32 ();
+			for (int i = 0; i < pillarCount; i++) {
+				MemoryPillar.Load(reader, this);
 			}
 		}
 

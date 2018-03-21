@@ -156,6 +156,14 @@ public class HexMapEditor : MonoBehaviour {
 				} else
 					CreateResource ();
 			}
+			else if (Input.GetKeyDown (KeyCode.M))
+			{
+				if (Input.GetKey (KeyCode.LeftShift))
+					RemovePillar ();
+				else
+					CreatePillar();
+			}
+				
 		}
 		previousCell = null;
 	}
@@ -163,6 +171,22 @@ public class HexMapEditor : MonoBehaviour {
 	HexCell GetCellUnderCursor () {
 		return
 			hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+	}
+
+	void CreatePillar()
+	{
+		HexCell cell = GetCellUnderCursor ();
+		if (cell && !cell.Pillar)
+			hexGrid.AddPillar (Instantiate (MemoryPillar.pillarPrefab), cell, 1);
+		else
+			print ("Already a pillar on this cell.");
+	}
+
+	void RemovePillar()
+	{
+		HexCell cell = GetCellUnderCursor ();
+		if (cell && cell.Pillar)
+			hexGrid.RemovePillar (cell.Pillar);
 	}
 
 	void CreateResource()
