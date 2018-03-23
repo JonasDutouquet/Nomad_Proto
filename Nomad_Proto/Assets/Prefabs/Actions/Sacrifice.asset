@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: Sacrifice
   m_EditorClassIdentifier: 
   displayName: Sacrifice
-  type: 5
+  type: 6
   cost: 1
   canRepeat: 0
-  isDone: 0
   immediate: 0

@@ -22,7 +22,7 @@ public class HexUnit : MonoBehaviour
 	public int Production
 	{
 		get{
-			int doubleProd = _didActions[2] ? 1 : 0;
+			int doubleProd = _didActions[(int)ActionTypes.Double] ? 1 : 0;
 			return (_baseProd + _bonusProd * location.HasResource) * (1 + doubleProd);
 		}
 	}
@@ -94,7 +94,7 @@ public class HexUnit : MonoBehaviour
 
 	public void ConsumeResource()
 	{
-		if(location.Resource > 0)
+		if(location.Resource > 0 && Type == UnitTypes.Producer)
 		{
 			location.RemoveResource ();
 		}
@@ -139,7 +139,7 @@ public class HexUnit : MonoBehaviour
 			value.Unit = this;
 			Grid.IncreaseVisibility(value, VisionRange);
 			transform.localPosition = value.Position;
-			Grid.MakeChildOfColumn(transform, value.ColumnIndex);
+			//Grid.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
 

@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: Double
   m_EditorClassIdentifier: 
   displayName: Double Production
-  type: 2
+  type: 3
   cost: 2
   canRepeat: 0
-  isDone: 0
   immediate: 1

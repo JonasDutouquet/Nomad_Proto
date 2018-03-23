@@ -68,8 +68,23 @@ public class HexGameUI : MonoBehaviour {
 							if (selectedUnit.Type == UnitTypes.Producer)
 								_turnMan.UpdateProduction ();
 							_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+							_inAction = false;
 						}
-						_inAction = false;
+					}
+					else
+					{
+						DoPathfinding();
+					}
+					break;
+				case ActionTypes.MoveRelic:
+					if (Input.GetMouseButtonDown(1) && grid.HasPath)
+					{
+						if (_turnMan.CanDoAction (_currentAction)) 
+						{
+							_turnMan.WarnEndTurn ();
+
+							_inAction = false;
+						}
 					}
 					else
 					{
@@ -143,12 +158,23 @@ public class HexGameUI : MonoBehaviour {
 	}
 
 	void DoMove () {
-		if (grid.HasPath) {
+		if (grid.HasPath)
+		{
 			SelectedUnit.Location.DisableHighlight ();
 			selectedUnit.Travel(grid.GetPath());
 			grid.ClearPath();
 			selectedUnit.Location.EnableHighlight (selectedUnit.SelectedCol);
 		}
+	}
+
+	public void DoMoveRelic()
+	{
+		DoMove ();
+		selectedUnit.DidAction ((int)_currentAction.type, true);
+		_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+		//selectedUnit = null;
+
+		DoSelection ();
 	}
 
 	bool UpdateCurrentCell () {

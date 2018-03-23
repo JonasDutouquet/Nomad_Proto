@@ -14,6 +14,7 @@ public class HexGrid : MonoBehaviour {
 	public HexCell cellPrefab;
 	public Text cellLabelPrefab;
 	public HexGridChunk chunkPrefab;
+	public Transform unitsPool;
 	public HexUnit unitPrefab;
 	public GameObject resourcePrefab;
 	public ScoutArrow arrowPrefab;
@@ -49,6 +50,7 @@ public class HexGrid : MonoBehaviour {
 	int currentCenterColumnIndex = -1;
 
 	List<HexUnit> units = new List<HexUnit>();
+	private int _unitsInMemory = 0;
 	List<ScoutArrow> arrows = new List<ScoutArrow> ();
 	List<MemoryPillar> pillars = new List<MemoryPillar> ();
 
@@ -83,6 +85,7 @@ public class HexGrid : MonoBehaviour {
 		unit.Type = type;
 		unit.Location = location;
 		unit.Orientation = orientation;
+		unit.transform.SetParent (unitsPool);
 	}
 
 	public void RemoveUnit (HexUnit unit) {
@@ -104,11 +107,11 @@ public class HexGrid : MonoBehaviour {
 		arrow.Die ();
 	}
 
-	public void AddPillar(MemoryPillar pillar, HexCell location, int range)
+	public void AddPillar(MemoryPillar pillar, HexCell location)
 	{
 		pillars.Add (pillar);
 		pillar.Grid = this;
-		pillar.VisionRange = range;
+		//pillar.VisionRange = range;
 		pillar.Location = location;
 	}
 
@@ -600,15 +603,26 @@ public class HexGrid : MonoBehaviour {
 
 	public void DistanceToRelic (HexCell toCell, int relicRange)
 	{
+		_unitsInMemory = 0;
 		foreach (var unit in units)
 			unit._inMemory = false;
+		
 		HexCell[] cellsAroundRelic = GetVisibleCells (toCell, relicRange).ToArray ();
 		foreach (var cell in cellsAroundRelic)
 		{
 			if(cell.Unit)
 			{
 				cell.Unit._inMemory = true;
+				_unitsInMemory++;
 			}
+		}
+	}
+
+	public int UnitsOutOfMemory
+	{
+		get{
+			DistanceToRelic (units[0].Location, units[0].MemoryRange);
+			return units.Count - _unitsInMemory;
 		}
 	}
 		

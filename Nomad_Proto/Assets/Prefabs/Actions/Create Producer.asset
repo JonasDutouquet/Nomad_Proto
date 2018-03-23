@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: Create Producer
   m_EditorClassIdentifier: 
   displayName: Create Producer
-  type: 7
+  type: 8
   cost: 3
   canRepeat: 0
-  isDone: 0
   immediate: 0

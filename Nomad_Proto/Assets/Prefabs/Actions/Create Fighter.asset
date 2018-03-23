@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: Create Fighter
   m_EditorClassIdentifier: 
   displayName: Create Fighter
-  type: 6
+  type: 7
   cost: 3
   canRepeat: 0
-  isDone: 0
   immediate: 0

@@ -7,7 +7,8 @@ public class MemoryPillar : MonoBehaviour
 {
 	public static MemoryPillar pillarPrefab;
 
-	private int _range;
+	[SerializeField] private int _range;
+
 	public int VisionRange
 	{ get
 		{ return _range;
@@ -41,8 +42,11 @@ public class MemoryPillar : MonoBehaviour
 
 	public void Reveal()
 	{
-		Grid.IncreaseVisibility(location, VisionRange);
-		_isRevealed = true;
+		if(!_isRevealed) 
+		{
+			Grid.IncreaseVisibility (location, _range);
+			_isRevealed = true;
+		}
 	}
 
 	public void Die () {
@@ -56,7 +60,6 @@ public class MemoryPillar : MonoBehaviour
 
 	public void Save (BinaryWriter writer) {
 		location.coordinates.Save (writer);
-		writer.Write ((byte)_range);
 		writer.Write (_isRevealed);
 	}
 
@@ -64,7 +67,7 @@ public class MemoryPillar : MonoBehaviour
 	{
 		HexCoordinates coordinates = HexCoordinates.Load(reader);
 		MemoryPillar pillar = Instantiate (pillarPrefab);
-		grid.AddPillar (Instantiate(pillar), grid.GetCell (coordinates), reader.ReadByte ());
+		grid.AddPillar (Instantiate(pillar), grid.GetCell (coordinates));
 		if (reader.ReadBoolean ())
 			pillar.Reveal ();
 	}

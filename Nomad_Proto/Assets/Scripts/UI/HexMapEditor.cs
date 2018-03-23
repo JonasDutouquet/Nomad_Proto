@@ -177,7 +177,7 @@ public class HexMapEditor : MonoBehaviour {
 	{
 		HexCell cell = GetCellUnderCursor ();
 		if (cell && !cell.Pillar)
-			hexGrid.AddPillar (Instantiate (MemoryPillar.pillarPrefab), cell, 1);
+			hexGrid.AddPillar (Instantiate (MemoryPillar.pillarPrefab), cell);
 		else
 			print ("Already a pillar on this cell.");
 	}

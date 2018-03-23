@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: ScoutArrow
   m_EditorClassIdentifier: 
   displayName: Scout Arrow
-  type: 1
+  type: 2
   cost: 2
   canRepeat: 0
-  isDone: 0
   immediate: 0

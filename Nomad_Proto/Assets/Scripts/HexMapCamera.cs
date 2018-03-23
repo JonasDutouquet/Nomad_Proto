@@ -49,8 +49,8 @@ public class HexMapCamera : MonoBehaviour {
 		ValidatePosition();
 
 		//Focus on a unit
-			HexUnit firstUnit = FindObjectOfType<HexGrid> ().GetUnits () [0];
-			SetFollowedUnit (firstUnit);
+		HexUnit firstUnit = FindObjectOfType<HexGrid> ().GetUnits () [0];
+		SetFollowedUnit (firstUnit);
 	}
 
 	void Update () {

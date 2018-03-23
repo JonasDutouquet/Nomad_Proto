@@ -13,6 +13,7 @@ public class TurnManager : MonoBehaviour
 	[Header("UI")]
 	[SerializeField] private ActionPointsUI _actionPointsUI;
 	[SerializeField] private Material _terrainMaterial;	//for forget mechanic
+	[SerializeField] private EndTurnUI _endTurnWarning;
 	private int _pointsUsed = 0;
 	private ResourceManager _resMan;
 
@@ -61,12 +62,35 @@ public class TurnManager : MonoBehaviour
 	{
 		if(Input.GetKeyDown (KeyCode.Return))
 		{
-			EndTurn ();
+			StartCoroutine (DoEndTurn (0f));
 		}
+	}
+
+	public void WarnEndTurn()
+	{
+		if (PointsLeft > 0) 
+		{
+			//warn
+			_endTurnWarning.DisplayWarning (PointsLeft, _grid.UnitsOutOfMemory);
+		} else
+			StartCoroutine (DoEndTurn (2f));
 	}
 
 	public void EndTurn()
 	{
+		StartCoroutine (DoEndTurn (2f));
+	}
+
+	IEnumerator DoEndTurn(float delay)
+	{
+		//activate memory pillar
+		if(Relic.Location.Pillar)
+		{
+			Relic.Location.Pillar.Reveal ();
+		}
+
+		yield return new WaitForSeconds (delay);
+
 		//reset actions done for each unit
 		_grid.DistanceToRelic (Relic.Location, Relic.MemoryRange);
 		List <HexUnit> units = _grid.GetUnits ();
@@ -83,7 +107,6 @@ public class TurnManager : MonoBehaviour
 
 		SetActionPoints ();
 		_resMan.EndTurn ();
-		//_hexUI.ClearArrows ();
 		_grid.ClearArrows ();
 	}
 

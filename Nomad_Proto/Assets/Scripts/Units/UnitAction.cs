@@ -14,5 +14,5 @@ public class UnitAction : ScriptableObject
 
 public enum ActionTypes
 {
-	Move, Arrow, Double, Heal, Freeze, Sacrifice, NewFighter, NewProducer, TechPoint
+	Move, MoveRelic, Arrow, Double, Heal, Freeze, Sacrifice, NewFighter, NewProducer, TechPoint
 }
