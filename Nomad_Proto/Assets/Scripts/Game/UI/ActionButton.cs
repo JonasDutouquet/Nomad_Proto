@@ -25,11 +25,16 @@ public class ActionButton : MonoBehaviour
 	public void Setup(UnitAction action, int pointsLeft, HexUnit unit)
 	{
 		_action.text = action.displayName;
-		_cost.text = "(" + action.cost.ToString () + ")";
+		_cost.text = unit.SpeedLeft == unit.Speed ? "(" + action.cost.ToString () + ")" : "(0)";
 		_relatedAction = action;
 		_relatedUnit = unit;
 		_button.onClick.AddListener (SendActionOrder);
 		UpdateButtonInteract (pointsLeft, unit);
+	}
+
+	public void SetMoveCost(UnitAction action, HexUnit unit)
+	{
+		_cost.text = unit.SpeedLeft == unit.Speed ? "(" + action.cost.ToString () + ")" : "(0)";
 	}
 
 	void SendActionOrder()

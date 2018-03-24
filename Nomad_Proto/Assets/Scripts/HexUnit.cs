@@ -106,6 +106,8 @@ public class HexUnit : MonoBehaviour
 		{
 			_didActions[i] = false;
 		}
+
+		_speedUsed = 0;
 	}
 
 	public bool DidAction(int action, bool set)
@@ -155,7 +157,7 @@ public class HexUnit : MonoBehaviour
 		}
 	}
 
-	public virtual int Speed {
+	public int Speed {
 		get {
 			return _speed;
 		}
@@ -169,6 +171,10 @@ public class HexUnit : MonoBehaviour
 		get
 		{
 			return _speed - _speedUsed;
+		}
+		set{
+			_speedUsed = 0;
+
 		}
 	}
 

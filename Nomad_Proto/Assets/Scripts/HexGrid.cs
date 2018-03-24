@@ -458,11 +458,11 @@ public class HexGrid : MonoBehaviour {
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
 		currentPathExists = Search(fromCell, toCell, unit);
-		ShowPath(unit.Speed);
+		ShowPath(unit.SpeedLeft);
 	}
 
 	bool Search (HexCell fromCell, HexCell toCell, HexUnit unit) {
-		int speed = unit.Speed;
+		int speed = unit.SpeedLeft;
 		searchFrontierPhase += 2;
 		if (searchFrontier == null) {
 			searchFrontier = new HexCellPriorityQueue();

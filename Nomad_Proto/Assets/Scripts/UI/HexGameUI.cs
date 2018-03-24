@@ -9,8 +9,7 @@ public class HexGameUI : MonoBehaviour {
 	[SerializeField] private TurnManager _turnMan;
 	[SerializeField] private HexMapEditor _hexMap;
 	[SerializeField] private HexMapCamera _camera;
-	//[SerializeField] private GameObject _arrowPrefab;
-	//[SerializeField] private GameObject _resourcePrefab;
+	[SerializeField] private GameObject _unitCreationInfo;
 	private bool[] _actionEnable;
 	private bool _inAction = false;
 	private UnitAction _currentAction;
@@ -64,21 +63,34 @@ public class HexGameUI : MonoBehaviour {
 				case ActionTypes.Move:
 					if (Input.GetMouseButtonDown(1) && grid.HasPath)
 					{
-						if (_turnMan.CanDoAction (_currentAction)) 
+						if (selectedUnit.SpeedLeft == selectedUnit.Speed)
+						{
+							if (_turnMan.CanDoAction (_currentAction)) 
+							{
+								DoMove ();
+								//selectedUnit.DidAction ((int)type, true);
+								if (selectedUnit.Type == UnitTypes.Producer)
+									_turnMan.UpdateProduction ();
+								//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+								//_inAction = false;
+							}
+						}
+						else
 						{
 							DoMove ();
 							selectedUnit.DidAction ((int)type, true);
-							if (selectedUnit.Type == UnitTypes.Producer)
-								_turnMan.UpdateProduction ();
 							_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
 							_inAction = false;
 						}
+						_unitDisplay.DisplayUnit (selectedUnit);
+						_currentButton.SetMoveCost (_currentAction,selectedUnit);
 					}
 					else
 					{
 						DoPathfinding();
 					}
 					break;
+
 				case ActionTypes.MoveRelic:
 					if (Input.GetMouseButtonDown(1) && grid.HasPath)
 					{
@@ -115,9 +127,9 @@ public class HexGameUI : MonoBehaviour {
 					if(_turnMan.CanDoAction (_currentAction))
 					{
 						UnitToCreate = UnitTypes.Fighter;
+						_unitCreationInfo.SetActive (true);
 						selectedUnit.DidAction ((int)type, true);
 						selectedUnit.DidAction ((int)ActionTypes.NewProducer, true);
-						//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
 						_unitDisplay.DisplayActions (selectedUnit, _turnMan.PointsLeft);
 						_inAction = false;
 					}
@@ -127,9 +139,9 @@ public class HexGameUI : MonoBehaviour {
 					if(_turnMan.CanDoAction (_currentAction))
 					{
 						UnitToCreate = UnitTypes.Producer;
+						_unitCreationInfo.SetActive (true);
 						selectedUnit.DidAction ((int)type, true);
 						selectedUnit.DidAction ((int)ActionTypes.NewFighter, true);
-						//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
 						_unitDisplay.DisplayActions (selectedUnit, _turnMan.PointsLeft);
 						_inAction = false;
 					}
@@ -179,23 +191,6 @@ public class HexGameUI : MonoBehaviour {
 		}
 	}
 
-	void DoArrowFinding()
-	{
-		if (UpdateCurrentCell()) {
-			if (currentCell && selectedUnit.IsValidArrow (currentCell)) {
-				grid.FindArrow(selectedUnit.Location, currentCell, selectedUnit);
-			}
-			else {
-				grid.ClearPath();
-			}
-		}
-	}
-
-	void ShootArrow()
-	{
-		grid.AddArrow (Instantiate(ScoutArrow.arrowPrefab), currentCell, selectedUnit.ArrowRange);
-	}
-
 	void DoMove () {
 		if (grid.HasPath)
 		{
@@ -203,6 +198,10 @@ public class HexGameUI : MonoBehaviour {
 			selectedUnit.Travel(grid.GetPath());
 			grid.ClearPath();
 			selectedUnit.Location.EnableHighlight (selectedUnit.SelectedCol);
+			if (selectedUnit.SpeedLeft == 0) {
+				selectedUnit.SpeedLeft = selectedUnit.Speed;
+				_inAction = false;
+			}
 		}
 	}
 
@@ -220,6 +219,23 @@ public class HexGameUI : MonoBehaviour {
 		}
 		else
 			DoSelection ();
+	}
+
+	void DoArrowFinding()
+	{
+		if (UpdateCurrentCell()) {
+			if (currentCell && selectedUnit.IsValidArrow (currentCell)) {
+				grid.FindArrow(selectedUnit.Location, currentCell, selectedUnit);
+			}
+			else {
+				grid.ClearPath();
+			}
+		}
+	}
+
+	void ShootArrow()
+	{
+		grid.AddArrow (Instantiate(ScoutArrow.arrowPrefab), currentCell, selectedUnit.ArrowRange);
 	}
 
 	void DoSpawnFinding()

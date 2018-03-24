@@ -15,11 +15,11 @@ MonoBehaviour:
   actions:
   - {fileID: 11400000, guid: e335bb2d3b06648ca994deff41402478, type: 2}
   - {fileID: 11400000, guid: 88792821c10b24a0cb9f4ce480e336ab, type: 2}
-  - {fileID: 11400000, guid: 191c8e990d2a9431ab473cd13f071c59, type: 2}
   - {fileID: 11400000, guid: 72270e196705a4a008c5652aecd1552a, type: 2}
   hunger: 2
-  arrowRange: 2
-  production: 0
   speed: 3
   visionRange: 0
+  arrowRange: 2
+  productionBase: 0
+  productionBonus: 0
   selectedColor: {r: 0.9705882, g: 0.7028397, b: 0.36397058, a: 1}
