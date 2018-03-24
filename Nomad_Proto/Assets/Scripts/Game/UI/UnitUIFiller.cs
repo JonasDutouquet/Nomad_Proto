@@ -28,12 +28,47 @@ public class UnitUIFiller : MonoBehaviour
 		_movement.text = isValid? "Movement " + unit.SpeedLeft + "/" + unit.Speed : "";
 	}
 
-	public void DisplayActions(HexUnit unit, int pointsLeft)
+	public void DisplaySpawningUnit(UnitTypes type)
 	{
-		StartCoroutine (UpdateActions (unit, pointsLeft));
+		DisplayActions (null, 0);
+		_type.text = type.ToString ();
+		_illustration.sprite = _unitsDisplay [(int)type];
+		_illustration.enabled = true;
+		_movement.text = "Choose unit position...";
 	}
 
-	IEnumerator ClearActions()
+	public void DisplayActions(HexUnit unit, int pointsLeft)
+	{
+		//StartCoroutine (UpdateActions (unit, pointsLeft));
+		UpdateActions (unit, pointsLeft);
+	}
+
+	void ClearActions()
+	{
+		for (int i = 0; i < _actionsDisplayed.Count ; i++)
+		{
+			var action = _actionsDisplayed [i];
+			Destroy (action.gameObject);
+		}
+		_actionsDisplayed.Clear ();
+	}
+
+	void UpdateActions(HexUnit unit, int pointsLeft)
+	{
+		bool isValid = unit != null ? true : false;
+		ClearActions ();
+		if(isValid)
+		{
+			foreach(var action in unit._data.actions)
+			{
+				ActionButton UIaction = Instantiate (_actionPrefab, _actions);
+				_actionsDisplayed.Add (UIaction);
+				UIaction.Setup (action, pointsLeft, unit);
+			}
+		}
+	}
+
+	/*IEnumerator ClearActions()
 	{
 		for (int i = 0; i < _actionsDisplayed.Count ; i++)
 		{
@@ -57,5 +92,5 @@ public class UnitUIFiller : MonoBehaviour
 				UIaction.Setup (action, pointsLeft, unit);
 			}
 		}
-	}
+	}*/
 }

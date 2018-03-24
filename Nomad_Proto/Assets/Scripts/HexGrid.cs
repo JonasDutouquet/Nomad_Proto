@@ -450,7 +450,6 @@ public class HexGrid : MonoBehaviour {
 			currentPathTo.EnableHighlight (Color.yellow);
 		} else
 			currentPathTo.EnableHighlight (Color.black);
-
 	}
 
 	public void FindPath (HexCell fromCell, HexCell toCell, HexUnit unit) 
@@ -601,13 +600,99 @@ public class HexGrid : MonoBehaviour {
 		return false;
 	}
 
-	public void DistanceToRelic (HexCell toCell, int relicRange)
+	public void FindSpawnPosition(HexCell fromCell, HexCell toCell)
+	{
+		ClearPath ();
+		currentPathFrom = fromCell;
+		currentPathTo = toCell;
+		currentPathExists = SearchSpawn (fromCell, toCell);
+		ShowSpawnCell (1);
+	}
+
+	void ShowSpawnCell(int range)
+	{
+		if (currentPathExists) {
+			HexCell current = currentPathTo;
+			while (current != currentPathFrom) {
+				current = current.PathFrom;
+			}
+			currentPathTo.EnableHighlight (Color.white);
+		} else
+			currentPathTo.EnableHighlight (Color.black);
+	}
+
+	bool SearchSpawn (HexCell fromCell, HexCell toCell)
+	{
+		int range = 1;
+		searchFrontierPhase += 2;
+		if (searchFrontier == null) {
+			searchFrontier = new HexCellPriorityQueue();
+		}
+		else {
+			searchFrontier.Clear();
+		}
+
+		fromCell.SearchPhase = searchFrontierPhase;
+		fromCell.Distance = 0;
+		searchFrontier.Enqueue(fromCell);
+		while (searchFrontier.Count > 0) {
+			HexCell current = searchFrontier.Dequeue();
+			current.SearchPhase += 1;
+
+			if (current == toCell) {
+				return true;
+			}
+
+			if (current.Distance > range -1)
+				return false;
+
+
+			int currentTurn = (current.Distance - 1) / range;
+
+			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
+				HexCell neighbor = current.GetNeighbor(d);
+				if (
+					neighbor == null ||
+					neighbor.SearchPhase > searchFrontierPhase
+				) {
+					continue;
+				}
+
+				int moveCost = 1;
+				int distance = current.Distance + moveCost;
+				int turn = (distance - 1) / range;
+				if (turn > currentTurn) {
+					distance = turn * range + moveCost;
+				}
+
+				if (neighbor.SearchPhase < searchFrontierPhase) {
+					neighbor.SearchPhase = searchFrontierPhase;
+					neighbor.Distance = distance;
+					neighbor.PathFrom = current;
+					neighbor.SearchHeuristic =
+						neighbor.coordinates.DistanceTo(toCell.coordinates);
+					searchFrontier.Enqueue(neighbor);
+				}
+				else if (distance < neighbor.Distance) {
+					int oldPriority = neighbor.SearchPriority;
+					neighbor.Distance = distance;
+					neighbor.PathFrom = current;
+					searchFrontier.Change(neighbor, oldPriority);
+				}
+			}
+		}
+		return false;
+	}
+
+	public void DistanceToRelic (HexCell toCell)
 	{
 		_unitsInMemory = 0;
 		foreach (var unit in units)
 			unit._inMemory = false;
+
+		int range = units [0].MemoryRange;
 		
-		HexCell[] cellsAroundRelic = GetVisibleCells (toCell, relicRange).ToArray ();
+		HexCell[] cellsAroundRelic = GetVisibleCells (toCell, range).ToArray ();
 		foreach (var cell in cellsAroundRelic)
 		{
 			if(cell.Unit)
@@ -621,7 +706,6 @@ public class HexGrid : MonoBehaviour {
 	public int UnitsOutOfMemory
 	{
 		get{
-			DistanceToRelic (units[0].Location, units[0].MemoryRange);
 			return units.Count - _unitsInMemory;
 		}
 	}

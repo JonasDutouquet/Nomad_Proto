@@ -14,7 +14,7 @@ public class ActionButton : MonoBehaviour
 	public delegate void ActionClicked (UnitAction action, ActionButton button);
 	public static event ActionClicked OnActionClicked;
 
-	public delegate void ImmediateAction (UnitAction action, HexUnit unit);
+	public delegate void ImmediateAction (UnitAction action, HexUnit unit, Button button);
 	public static event ImmediateAction OnImmediateAction;
 
 	void OnEnable()
@@ -42,10 +42,7 @@ public class ActionButton : MonoBehaviour
 		else
 		{
 			if (OnImmediateAction != null)
-				OnImmediateAction (_relatedAction, _relatedUnit);
-
-			if (!_relatedAction.canRepeat && _relatedAction.immediate)
-				_button.interactable = false;
+				OnImmediateAction (_relatedAction, _relatedUnit, _button);
 		}
 	}
 

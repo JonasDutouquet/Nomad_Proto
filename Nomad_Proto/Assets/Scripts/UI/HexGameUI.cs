@@ -16,6 +16,9 @@ public class HexGameUI : MonoBehaviour {
 	private UnitAction _currentAction;
 	private ActionButton _currentButton;
 
+	public UnitTypes? UnitToCreate { get; set;}
+	public bool SpawningUnit {get; set;}
+
 	HexCell currentCell;
 
 	HexUnit selectedUnit;
@@ -49,7 +52,7 @@ public class HexGameUI : MonoBehaviour {
 	void Update () {
 		if (!EventSystem.current.IsPointerOverGameObject()) 
 		{
-			if (Input.GetMouseButtonDown(0))
+			if (Input.GetMouseButtonDown(0) && !SpawningUnit)
 			{
 				DoSelection();
 			}
@@ -81,6 +84,7 @@ public class HexGameUI : MonoBehaviour {
 					{
 						if (_turnMan.CanDoAction (_currentAction)) 
 						{
+							grid.DistanceToRelic (currentCell);
 							_turnMan.WarnEndTurn ();
 
 							_inAction = false;
@@ -91,6 +95,7 @@ public class HexGameUI : MonoBehaviour {
 						DoPathfinding();
 					}
 					break;
+
 				case ActionTypes.Arrow:
 					if (Input.GetMouseButton (1) && grid.HasPath) 
 					{
@@ -105,12 +110,46 @@ public class HexGameUI : MonoBehaviour {
 						DoArrowFinding ();
 					}
 					break;
+
+				case ActionTypes.NewFighter:
+					if(_turnMan.CanDoAction (_currentAction))
+					{
+						UnitToCreate = UnitTypes.Fighter;
+						selectedUnit.DidAction ((int)type, true);
+						selectedUnit.DidAction ((int)ActionTypes.NewProducer, true);
+						//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+						_unitDisplay.DisplayActions (selectedUnit, _turnMan.PointsLeft);
+						_inAction = false;
+					}
+					break;
+
+				case ActionTypes.NewProducer:
+					if(_turnMan.CanDoAction (_currentAction))
+					{
+						UnitToCreate = UnitTypes.Producer;
+						selectedUnit.DidAction ((int)type, true);
+						selectedUnit.DidAction ((int)ActionTypes.NewFighter, true);
+						//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+						_unitDisplay.DisplayActions (selectedUnit, _turnMan.PointsLeft);
+						_inAction = false;
+					}
+					break;
+				}
+			}
+			else if(SpawningUnit)
+			{
+				if (Input.GetMouseButton (1) && grid.HasPath)
+				{
+					DoCreateUnit ();
+				}
+				else{
+					DoSpawnFinding ();
 				}
 			}
 		}
 	}
 
-	void DoSelection () {
+	public void DoSelection () {
 		grid.ClearPath();
 		UpdateCurrentCell();
 		if(selectedUnit)selectedUnit.Location.DisableHighlight ();
@@ -172,8 +211,34 @@ public class HexGameUI : MonoBehaviour {
 		DoMove ();
 		selectedUnit.DidAction ((int)_currentAction.type, true);
 		_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
-		//selectedUnit = null;
 
+		//spawn a unit?
+		if(UnitToCreate != null)
+		{
+			SpawningUnit = true;
+			_unitDisplay.DisplaySpawningUnit (UnitToCreate.Value);
+		}
+		else
+			DoSelection ();
+	}
+
+	void DoSpawnFinding()
+	{
+		if (UpdateCurrentCell()) {
+			if (currentCell && selectedUnit.IsValidDestination (currentCell)) {
+				grid.FindSpawnPosition(selectedUnit.Location, currentCell);
+			}
+			else {
+				grid.ClearPath();
+			}
+		}
+	}
+
+	public void DoCreateUnit()
+	{
+		grid.AddUnit (Instantiate(HexUnit.unitPrefab), currentCell, 0f, UnitToCreate.Value);
+		UnitToCreate = null;
+		SpawningUnit = false;
 		DoSelection ();
 	}
 

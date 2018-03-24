@@ -41,6 +41,18 @@ public class TurnManager : MonoBehaviour
 		}
 	}
 
+	public bool CanDoAction (int cost)
+	{
+		bool canDoAction = PointsLeft >= cost ? true : false;
+		if (canDoAction)
+		{
+			_pointsUsed += cost;
+			_actionPointsUI.SetPointsLeft (PointsLeft);
+		}
+
+		return canDoAction;
+	}
+
 	public bool CanDoAction (UnitAction action)
 	{
 		bool canDoAction = PointsLeft >= action.cost ? true : false;
@@ -60,6 +72,7 @@ public class TurnManager : MonoBehaviour
 
 	void Update()
 	{
+		//DEBUG
 		if(Input.GetKeyDown (KeyCode.Return))
 		{
 			StartCoroutine (DoEndTurn (0f));
@@ -68,12 +81,17 @@ public class TurnManager : MonoBehaviour
 
 	public void WarnEndTurn()
 	{
-		if (PointsLeft > 0) 
+		int unitsOutOfMemory = _grid.UnitsOutOfMemory;
+
+		if (PointsLeft > 0 || unitsOutOfMemory > 0) 
 		{
 			//warn
-			_endTurnWarning.DisplayWarning (PointsLeft, _grid.UnitsOutOfMemory);
+			_endTurnWarning.DisplayWarning (PointsLeft, unitsOutOfMemory);
 		} else
+		{
+			_hexUI.DoMoveRelic ();
 			StartCoroutine (DoEndTurn (2f));
+		}
 	}
 
 	public void EndTurn()
@@ -92,7 +110,7 @@ public class TurnManager : MonoBehaviour
 		yield return new WaitForSeconds (delay);
 
 		//reset actions done for each unit
-		_grid.DistanceToRelic (Relic.Location, Relic.MemoryRange);
+		_grid.DistanceToRelic (Relic.Location);
 		List <HexUnit> units = _grid.GetUnits ();
 		for (int i = 0 ; i< units.Count ;i++)
 		{

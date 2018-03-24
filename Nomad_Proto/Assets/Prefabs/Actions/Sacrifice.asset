@@ -15,4 +15,4 @@ MonoBehaviour:
   type: 6
   cost: 1
   canRepeat: 0
-  immediate: 0
+  immediate: 1
