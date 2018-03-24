@@ -47,10 +47,6 @@ public class HexMapCamera : MonoBehaviour {
 	void OnEnable () {
 		instance = this;
 		ValidatePosition();
-
-		//Focus on a unit
-		HexUnit firstUnit = FindObjectOfType<HexGrid> ().GetUnits () [0];
-		SetFollowedUnit (firstUnit);
 	}
 
 	void Update () {
@@ -160,30 +156,6 @@ public class HexMapCamera : MonoBehaviour {
 		position += direction * distance;
 		transform.localPosition =
 			grid.wrapping ? WrapPosition(position) : ClampPosition(position);
-	}
-
-	void AdjustMousePosition (bool vertical)
-	{
-		if(vertical)	//damp vertical movement
-		{
-			
-		}
-		else 			//damp horizontal movement
-		{
-			
-		}
-		Vector3 direction =
-			transform.localRotation *
-			new Vector3(mouseX, 0f, mouseY).normalized;
-		float damping = Mathf.Max(Mathf.Abs(mouseX), Mathf.Abs(mouseY));
-		float distance =
-			Mathf.Lerp(moveSpeedMinZoom, moveSpeedMaxZoom, zoom) *
-			damping * Time.deltaTime;
-
-		Vector3 position = transform.localPosition;
-		position += direction * distance;
-		transform.localPosition =
-			grid.wrapping ? WrapPosition(position) : ClampPosition(position);		
 	}
 
 	Vector3 ClampPosition (Vector3 position) {

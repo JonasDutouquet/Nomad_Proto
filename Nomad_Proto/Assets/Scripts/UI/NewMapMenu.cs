@@ -6,9 +6,11 @@ public class NewMapMenu : MonoBehaviour {
 
 	public HexMapGenerator mapGenerator;
 
+	public GameManager gameManager;
+
 	bool generateMaps = true;
 
-	bool wrapping = true;
+	public bool wrapping = false;
 
 	public void ToggleMapGeneration (bool toggle) {
 		generateMaps = toggle;
@@ -49,5 +51,8 @@ public class NewMapMenu : MonoBehaviour {
 		}
 		HexMapCamera.ValidatePosition();
 		Close();
+
+		//game is ready
+		gameManager.IsPlaying = true;
 	}
 }

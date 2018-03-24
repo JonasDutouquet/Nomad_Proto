@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour 
 {
-	public bool _playing;
+	[SerializeField] private bool _playing;
 	[SerializeField] private string _saveToLoad;
+	[SerializeField] private HexGrid _grid;
 	[SerializeField] private SaveLoadMenu _loader;
 	[SerializeField] private HexGameUI _hexUI;
 	[SerializeField] private HexMapEditor _mapEditor;
 	[SerializeField] private GameObject _editModeUI;
+	[SerializeField] private GameObject _launchMenuUI;
+	[SerializeField] private GameObject _gameUI;
 	private TurnManager _turn;
 
 	void Awake()
 	{
-		if(_playing) {
+		if(_playing)
+		{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             _loader.Load ("/Users/jonas/Library/Application Support/DefaultCompany/Nomad_Proto/"+ _saveToLoad +".map");
 #elif UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -23,19 +27,34 @@ public class GameManager : MonoBehaviour
 			_hexUI.SetEditMode (false);
 			_mapEditor.SetEditMode (false);
 			_editModeUI.SetActive (false);
-			//_turn = GetComponent<TurnManager> ();
-			//_turn.EndTurn ();
+			_launchMenuUI.SetActive (false);
 		}
+		_gameUI.SetActive (_playing);
+	}
 
+	public bool IsPlaying
+	{
+		get{
+			return _playing;
+		}
+		set{
+			_grid.SetCamera ();
+			GetComponent<ResourceManager> ().SetResource ();
+			_hexUI.SetEditMode (false);
+			_gameUI.SetActive (true);
+			_playing = value;
+		}
 	}
 
 	void Update()
 	{
 		if(Input.GetKeyDown (KeyCode.Escape))
 		{
-			//_hexUI.SetEditMode (true);
-			//_mapEditor.SetEditMode (true);
-			_editModeUI.SetActive (true);
+			if (Input.GetKey (KeyCode.Space))
+				_editModeUI.SetActive (true);
+			else {
+				_launchMenuUI.SetActive (true);
+			}
 		}
 	}
 }

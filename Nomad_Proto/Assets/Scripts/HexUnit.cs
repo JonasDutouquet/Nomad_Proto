@@ -173,8 +173,8 @@ public class HexUnit : MonoBehaviour
 			return _speed - _speedUsed;
 		}
 		set{
-			_speedUsed = 0;
-
+			//_speedUsed = 0;
+			_speedUsed = _speed - value;
 		}
 	}
 
@@ -241,7 +241,7 @@ public class HexUnit : MonoBehaviour
 					a.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
 					b.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
 				}
-				Grid.MakeChildOfColumn(transform, nextColumn);
+				//Grid.MakeChildOfColumn(transform, nextColumn);
 				currentColumn = nextColumn;
 			}
 
@@ -377,7 +377,7 @@ public class HexUnit : MonoBehaviour
 		{
 			writer.Write (_didActions[i]);
 		}
-		//writer.Write (_speed);
+		writer.Write ((byte)SpeedLeft);
 		//writer.Write (_visionRange);
 	}
 
@@ -391,6 +391,8 @@ public class HexUnit : MonoBehaviour
 
 		for (int i = 0; i < System.Enum.GetValues (typeof(ActionTypes)).Length; i++)
 			unit.DidAction (i, reader.ReadBoolean ());
+
+		unit.SpeedLeft = reader.ReadByte ();
 	}
 
 	void OnEnable () {

@@ -25,8 +25,7 @@ public class HexGameUI : MonoBehaviour {
 	void Awake()
 	{
 		_actionEnable = new bool[System.Enum.GetValues(typeof(ActionTypes)).Length];
-		//HexCell.resourcePrefab = _resourcePrefab;
-		//HexCell.arrowPrefab = _arrowPrefab;
+		_hexMap.ShowGrid (false);
 	}
 
 	public HexUnit SelectedUnit
@@ -79,11 +78,11 @@ public class HexGameUI : MonoBehaviour {
 						{
 							DoMove ();
 							selectedUnit.DidAction ((int)type, true);
-							_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+							//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
 							_inAction = false;
 						}
 						_unitDisplay.DisplayUnit (selectedUnit);
-						_currentButton.SetMoveCost (_currentAction,selectedUnit);
+						_currentButton.SetMoveCost (_turnMan.PointsLeft);
 					}
 					else
 					{
@@ -216,9 +215,11 @@ public class HexGameUI : MonoBehaviour {
 		{
 			SpawningUnit = true;
 			_unitDisplay.DisplaySpawningUnit (UnitToCreate.Value);
-		}
-		else
+		} 
+		else {
 			DoSelection ();
+		}
+
 	}
 
 	void DoArrowFinding()

@@ -628,6 +628,8 @@ public class HexCell : MonoBehaviour {
 		ShaderData.RefreshVisibility(this);
 
 		//load resources
+		while (_resourceAmount > 0)
+			RemoveResource ();
 		if(header >= 7)
 		{
 			int r = reader.ReadByte ();

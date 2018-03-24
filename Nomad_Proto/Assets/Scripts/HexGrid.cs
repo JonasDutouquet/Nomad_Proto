@@ -129,9 +129,9 @@ public class HexGrid : MonoBehaviour {
 		arrows.Clear();
 	}
 
-	public void MakeChildOfColumn (Transform child, int columnIndex) {
+	/*public void MakeChildOfColumn (Transform child, int columnIndex) {
 		child.SetParent(columns[columnIndex], false);
-	}
+	}*/
 
 	public bool CreateMap (int x, int z, bool wrapping) {
 		if (
@@ -144,6 +144,7 @@ public class HexGrid : MonoBehaviour {
 
 		ClearPath();
 		ClearUnits();
+		ClearArrows ();
 		if (columns != null) {
 			for (int i = 0; i < columns.Length; i++) {
 				Destroy(columns[i].gameObject);
@@ -372,6 +373,7 @@ public class HexGrid : MonoBehaviour {
 			for (int i = 0; i < unitCount; i++) {
 				HexUnit.Load(reader, this);
 			}
+			SetCamera ();
 		}
 
 		if(header >= 8)
@@ -828,5 +830,20 @@ public class HexGrid : MonoBehaviour {
 			}
 			columns[i].localPosition = position;
 		}
+	}
+
+	public void PrintLocations()
+	{
+		for (int i = 0 ; i < units.Count ; i++)
+		{
+			HexUnit unit = units [i];
+			Debug.Log ("Unit " + i + " : " + unit.Type.ToString () + ", cell coordinates : X = " + unit.Location.coordinates.X + " ; Z = " + unit.Location.coordinates.Z);
+		}
+	}
+
+	public void SetCamera()
+	{
+		if(units.Count > 0)
+			FindObjectOfType<HexMapCamera> ().SetFollowedUnit (units[0]);
 	}
 }

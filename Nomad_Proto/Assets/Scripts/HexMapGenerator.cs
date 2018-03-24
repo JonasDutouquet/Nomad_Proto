@@ -9,6 +9,18 @@ public class HexMapGenerator : MonoBehaviour {
 
 	public int seed;
 
+	public bool randomResources;
+
+	[Range(1,5)]
+	public int maxResources = 3;
+
+	[Range(0,1)]
+	public float resourceProbability = 0.5f;
+
+	public bool spawnInitialUnits;
+
+	public InitialUnit[] initialUnits;
+
 	[Range(0f, 0.5f)]
 	public float jitterProbability = 0.25f;
 
@@ -159,6 +171,10 @@ public class HexMapGenerator : MonoBehaviour {
 		CreateClimate();
 		CreateRivers();
 		SetTerrainType();
+		if (randomResources)
+			SpawnRandomResources ();
+		if (spawnInitialUnits)
+			SpawnUnits ();
 		for (int i = 0; i < cellCount; i++) {
 			grid.GetCell(i).SearchPhase = 0;
 		}
@@ -770,5 +786,40 @@ public class HexMapGenerator : MonoBehaviour {
 			Random.Range(region.xMin, region.xMax),
 			Random.Range(region.zMin, region.zMax)
 		);
+	}
+
+	void SpawnRandomResources()
+	{
+		List<HexCell> allCells = new List<HexCell> ();
+
+		for (int i = 0; i < cellCount; i++)
+		{
+			HexCell cell = grid.GetCell (i);
+			if(!cell.IsUnderwater)
+				allCells.Add (cell);
+		}
+
+		for (int r = 0 ; r < maxResources ; r++)
+		{	
+			for (int i = 0; i < allCells.Count; i++)
+			{
+				HexCell cell = allCells[i];
+				if (Random.Range (0f, 1f) < resourceProbability)
+					cell.AddRessource ();
+				//else
+				//	allCells.Remove (cell);
+			}
+		}
+	}
+
+	void SpawnUnits()
+	{
+		for (int i = 0; i < initialUnits.Length ; i++)
+		{
+			InitialUnit unit = initialUnits [i];
+			HexCoordinates coordinates = unit.GetCoordinates ();
+			grid.AddUnit (Instantiate(HexUnit.unitPrefab), grid.GetCell (coordinates), 0f, unit.type);
+		}
+		//grid.SetCamera ();
 	}
 }

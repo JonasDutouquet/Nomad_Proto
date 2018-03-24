@@ -16,7 +16,6 @@ public class UnitUIFiller : MonoBehaviour
 	void Start()
 	{
 		DisplayUnit (null);
-		//DisplayActions (null);
 	}
 
 	public void DisplayUnit(HexUnit unit)
@@ -39,22 +38,6 @@ public class UnitUIFiller : MonoBehaviour
 
 	public void DisplayActions(HexUnit unit, int pointsLeft)
 	{
-		//StartCoroutine (UpdateActions (unit, pointsLeft));
-		UpdateActions (unit, pointsLeft);
-	}
-
-	void ClearActions()
-	{
-		for (int i = 0; i < _actionsDisplayed.Count ; i++)
-		{
-			var action = _actionsDisplayed [i];
-			Destroy (action.gameObject);
-		}
-		_actionsDisplayed.Clear ();
-	}
-
-	void UpdateActions(HexUnit unit, int pointsLeft)
-	{
 		bool isValid = unit != null ? true : false;
 		ClearActions ();
 		if(isValid)
@@ -68,7 +51,7 @@ public class UnitUIFiller : MonoBehaviour
 		}
 	}
 
-	/*IEnumerator ClearActions()
+	void ClearActions()
 	{
 		for (int i = 0; i < _actionsDisplayed.Count ; i++)
 		{
@@ -76,21 +59,5 @@ public class UnitUIFiller : MonoBehaviour
 			Destroy (action.gameObject);
 		}
 		_actionsDisplayed.Clear ();
-		yield return null;
 	}
-
-	IEnumerator UpdateActions(HexUnit unit, int pointsLeft)
-	{
-		bool isValid = unit != null ? true : false;
-		yield return ClearActions ();
-		if(isValid)
-		{
-			foreach(var action in unit._data.actions)
-			{
-				ActionButton UIaction = Instantiate (_actionPrefab, _actions);
-				_actionsDisplayed.Add (UIaction);
-				UIaction.Setup (action, pointsLeft, unit);
-			}
-		}
-	}*/
 }

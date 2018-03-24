@@ -89,8 +89,8 @@ public class TurnManager : MonoBehaviour
 			_endTurnWarning.DisplayWarning (PointsLeft, unitsOutOfMemory);
 		} else
 		{
-			_hexUI.DoMoveRelic ();
 			StartCoroutine (DoEndTurn (2f));
+			_hexUI.DoMoveRelic ();
 		}
 	}
 
