@@ -10,6 +10,7 @@ public class HexGameUI : MonoBehaviour {
 	[SerializeField] private HexMapEditor _hexMap;
 	[SerializeField] private HexMapCamera _camera;
 	[SerializeField] private GameObject _unitCreationInfo;
+	[SerializeField] private GameObject _pillarInfo;
 	private bool[] _actionEnable;
 	private bool _inAction = false;
 	private UnitAction _currentAction;
@@ -26,13 +27,6 @@ public class HexGameUI : MonoBehaviour {
 	{
 		_actionEnable = new bool[System.Enum.GetValues(typeof(ActionTypes)).Length];
 		_hexMap.ShowGrid (false);
-	}
-
-	public HexUnit SelectedUnit
-	{
-		get{
-			return selectedUnit;
-		}
 	}
 
 	public void SetEditMode (bool toggle) {
@@ -56,6 +50,7 @@ public class HexGameUI : MonoBehaviour {
 			}
 			else if (selectedUnit && _inAction)
 			{
+				//_camera.SetFollowedUnit (selectedUnit);
 				ActionTypes type = _currentAction.type;
 				switch (type)
 				{
@@ -67,18 +62,16 @@ public class HexGameUI : MonoBehaviour {
 							if (_turnMan.CanDoAction (_currentAction)) 
 							{
 								DoMove ();
-								//selectedUnit.DidAction ((int)type, true);
 								if (selectedUnit.Type == UnitTypes.Producer)
 									_turnMan.UpdateProduction ();
-								//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
-								//_inAction = false;
 							}
 						}
 						else
 						{
 							DoMove ();
 							selectedUnit.DidAction ((int)type, true);
-							//_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
+							if (selectedUnit.Type == UnitTypes.Producer)
+								_turnMan.UpdateProduction ();
 							_inAction = false;
 						}
 						_unitDisplay.DisplayUnit (selectedUnit);
@@ -193,7 +186,7 @@ public class HexGameUI : MonoBehaviour {
 	void DoMove () {
 		if (grid.HasPath)
 		{
-			SelectedUnit.Location.DisableHighlight ();
+			selectedUnit.Location.DisableHighlight ();
 			selectedUnit.Travel(grid.GetPath());
 			grid.ClearPath();
 			selectedUnit.Location.EnableHighlight (selectedUnit.SelectedCol);
@@ -206,9 +199,12 @@ public class HexGameUI : MonoBehaviour {
 
 	public void DoMoveRelic()
 	{
+		if(currentCell.Pillar)
+		{
+			currentCell.Pillar.Reveal ();
+			_pillarInfo.SetActive (true);
+		}
 		DoMove ();
-		selectedUnit.DidAction ((int)_currentAction.type, true);
-		_currentButton.UpdateButtonInteract (_turnMan.PointsLeft, selectedUnit);
 
 		//spawn a unit?
 		if(UnitToCreate != null)
@@ -217,7 +213,12 @@ public class HexGameUI : MonoBehaviour {
 			_unitDisplay.DisplaySpawningUnit (UnitToCreate.Value);
 		} 
 		else {
-			DoSelection ();
+			grid.ClearPath ();
+			selectedUnit.Location.DisableHighlight ();
+			selectedUnit = null;
+			_hexMap.ShowGrid (false);
+			_unitDisplay.DisplayUnit (null);
+			_unitDisplay.DisplayActions (null, _turnMan.PointsLeft);
 		}
 
 	}

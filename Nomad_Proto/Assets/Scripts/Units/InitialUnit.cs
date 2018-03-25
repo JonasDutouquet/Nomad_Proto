@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class InitialUnit : ScriptableObject 
 {
+	public bool isUnit;
 	public UnitTypes type;
 	public int X;
 	public int Z;

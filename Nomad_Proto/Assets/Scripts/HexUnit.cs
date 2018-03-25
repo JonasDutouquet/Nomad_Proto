@@ -41,6 +41,8 @@ public class HexUnit : MonoBehaviour
 	const float rotationSpeed = 180f;
 	const float travelSpeed = 4f;
 
+	public HexMapCamera Camera {get; set;}
+
 	private UnitTypes _type;
 	public Color SelectedCol{get;private set;}
 	private int _speedUsed = 0;
@@ -276,6 +278,8 @@ public class HexUnit : MonoBehaviour
 		orientation = transform.localRotation.eulerAngles.y;
 		ListPool<HexCell>.Add(pathToTravel);
 		pathToTravel = null;
+
+		Camera.SetFollowedUnit (this);
 
 		//reset orientation for 2D sprites
 		Quaternion fromRotation = transform.localRotation;

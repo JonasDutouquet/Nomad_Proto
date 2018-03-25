@@ -9,11 +9,13 @@ public class TurnManager : MonoBehaviour
 	[SerializeField] private HexGrid _grid;
 	[SerializeField] private HexGameUI _hexUI;
 	[SerializeField] private bool _forget;
+	[Range(0f, 3f)][SerializeField] private float _oblivionDelay = 1f;
 
 	[Header("UI")]
 	[SerializeField] private ActionPointsUI _actionPointsUI;
 	[SerializeField] private Material _terrainMaterial;	//for forget mechanic
 	[SerializeField] private EndTurnUI _endTurnWarning;
+//	[SerializeField] private GameObject _pillarInfo;
 	private int _pointsUsed = 0;
 	private ResourceManager _resMan;
 
@@ -21,6 +23,7 @@ public class TurnManager : MonoBehaviour
 
 	void Awake()
 	{
+		//_actionPointsUI.SetTotalPoints (_pointsPerTurn);
 		SetActionPoints ();
 		_resMan = GetComponent<ResourceManager> ();
 		if(_forget) _terrainMaterial.EnableKeyword ("END_TURN");
@@ -89,23 +92,26 @@ public class TurnManager : MonoBehaviour
 			_endTurnWarning.DisplayWarning (PointsLeft, unitsOutOfMemory);
 		} else
 		{
-			StartCoroutine (DoEndTurn (2f));
+			StartCoroutine (DoEndTurn (_oblivionDelay));
 			_hexUI.DoMoveRelic ();
 		}
 	}
 
 	public void EndTurn()
 	{
-		StartCoroutine (DoEndTurn (2f));
+		StartCoroutine (DoEndTurn (_oblivionDelay));
 	}
 
 	IEnumerator DoEndTurn(float delay)
 	{
 		//activate memory pillar
-		if(Relic.Location.Pillar)
+		/*if(Relic.Location.Pillar)
 		{
 			Relic.Location.Pillar.Reveal ();
-		}
+
+			//UI
+//			_pillarInfo.SetActive (true);
+		}*/
 
 		yield return new WaitForSeconds (delay);
 

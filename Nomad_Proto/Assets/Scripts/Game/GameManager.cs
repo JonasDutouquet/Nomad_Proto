@@ -38,11 +38,14 @@ public class GameManager : MonoBehaviour
 			return _playing;
 		}
 		set{
-			_grid.SetCamera ();
-			GetComponent<ResourceManager> ().SetResource ();
-			_hexUI.SetEditMode (false);
-			_gameUI.SetActive (true);
 			_playing = value;
+			if(value)
+			{
+				_grid.SetCamera ();
+				GetComponent<ResourceManager> ().SetResource ();
+				_hexUI.SetEditMode (false);
+				_gameUI.SetActive (true);
+			}
 		}
 	}
 

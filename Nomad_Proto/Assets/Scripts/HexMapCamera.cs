@@ -109,6 +109,11 @@ public class HexMapCamera : MonoBehaviour {
 		StartCoroutine (FocusOnUnit (unit.transform.position));
 	}
 
+	public void SetFollowedUnit(Vector3 position)
+	{
+		StartCoroutine (FocusOnUnit (position));
+	}
+
 	IEnumerator FocusOnUnit(Vector3 unitPos)
 	{
 		float elaspedTime = 0f;

@@ -119,6 +119,7 @@ public class SaveLoadMenu : MonoBehaviour {
 				gameManager.GetComponent<ResourceManager>().Load (reader, header);
 
 				HexMapCamera.ValidatePosition();
+				gameManager.IsPlaying = true;
 			}
 			else {
 				Debug.LogWarning("Unknown map format " + header);

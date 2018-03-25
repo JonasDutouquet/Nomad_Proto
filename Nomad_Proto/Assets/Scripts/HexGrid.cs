@@ -23,6 +23,7 @@ public class HexGrid : MonoBehaviour {
 	public UnitData producerData;
 	public UnitData relicData;
 	public UnitData enemyData;
+	public HexMapCamera cam;
 
 	public Texture2D noiseSource;
 
@@ -86,6 +87,7 @@ public class HexGrid : MonoBehaviour {
 		unit.Location = location;
 		unit.Orientation = orientation;
 		unit.transform.SetParent (unitsPool);
+		unit.Camera = cam;
 	}
 
 	public void RemoveUnit (HexUnit unit) {
