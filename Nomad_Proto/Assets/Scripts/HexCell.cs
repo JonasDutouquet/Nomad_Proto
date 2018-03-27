@@ -5,11 +5,15 @@ using System.IO;
 public class HexCell : MonoBehaviour {
 
 	public HexCoordinates coordinates;
-
 	public RectTransform uiRect;
-
 	public HexGridChunk chunk;
 
+	public HexUnit Unit { get; set; }
+	public ScoutArrow Arrow { get; set;}
+	public MemoryPillar Pillar { get; set;}
+	public EnemyUnit Enemy { get; set;}
+
+	#region Resource Management
 	private int _resourceAmount = 0;
 	private GameObject[] _resources = new GameObject[3];
 	public static GameObject resourcePrefab;
@@ -48,7 +52,9 @@ public class HexCell : MonoBehaviour {
 			return _resourceAmount;
 		}
 	}
+	#endregion
 
+	#region Cell Data
 	public int Index { get; set; }
 
 	public int ColumnIndex { get; set; }
@@ -305,12 +311,6 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
-	public HexUnit Unit { get; set; }
-
-	public ScoutArrow Arrow { get; set;}
-
-	public MemoryPillar Pillar { get; set;}
-
 	public HexCell PathFrom { get; set; }
 
 	public int SearchHeuristic { get; set; }
@@ -402,7 +402,9 @@ public class HexCell : MonoBehaviour {
 			hasIncomingRiver && incomingRiver == direction ||
 			hasOutgoingRiver && outgoingRiver == direction;
 	}
+	#endregion
 
+	#region Cell Creation
 	public void RemoveIncomingRiver () {
 		if (!hasIncomingRiver) {
 			return;
@@ -547,7 +549,9 @@ public class HexCell : MonoBehaviour {
 			Unit.ValidateLocation();
 		}
 	}
+	#endregion
 
+	#region Save/load
 	public void Save (BinaryWriter writer) {
 		writer.Write((byte)terrainTypeIndex);
 		writer.Write((byte)(elevation + 127));
@@ -639,6 +643,9 @@ public class HexCell : MonoBehaviour {
 		}
 	}
 
+	#endregion
+
+	#region UI
 	public void SetLabel (string text) {
 		UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
 		label.text = text;
@@ -658,4 +665,5 @@ public class HexCell : MonoBehaviour {
 	public void SetMapData (float data) {
 		ShaderData.SetMapData(this, data);
 	}
+	#endregion
 }

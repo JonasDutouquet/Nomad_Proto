@@ -818,10 +818,22 @@ public class HexMapGenerator : MonoBehaviour {
 		{
 			InitialUnit unit = initialUnits [i];
 			HexCoordinates coordinates = unit.GetCoordinates ();
-			if (unit.isUnit)
+			switch(unit.initType)
+			{
+			case InitialUnitType.unit:
 				grid.AddUnit (Instantiate (HexUnit.unitPrefab), grid.GetCell (coordinates), 0f, unit.type);
-			else //it's a pillar
+				break;
+			case InitialUnitType.pillar:
 				grid.AddPillar (Instantiate (grid.pillarPrefab), grid.GetCell (coordinates));
+				break;
+			case InitialUnitType.enemy:
+				grid.AddEnemy (Instantiate (EnemyUnit.enemyPrefab), grid.GetCell (coordinates));
+				break;
+			}
+			/*if (unit.isUnit)
+				grid.AddUnit (Instantiate (HexUnit.unitPrefab), grid.GetCell (coordinates), 0f, unit.unitType);
+			else //it's a pillar
+				grid.AddPillar (Instantiate (grid.pillarPrefab), grid.GetCell (coordinates));*/
 		}
 	}
 }

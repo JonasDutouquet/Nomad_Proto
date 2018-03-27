@@ -50,7 +50,6 @@ public class HexGameUI : MonoBehaviour {
 			}
 			else if (selectedUnit && _inAction)
 			{
-				//_camera.SetFollowedUnit (selectedUnit);
 				ActionTypes type = _currentAction.type;
 				switch (type)
 				{

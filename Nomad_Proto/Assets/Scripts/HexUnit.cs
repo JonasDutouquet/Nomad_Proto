@@ -5,13 +5,13 @@ using System.IO;
 
 public class HexUnit : MonoBehaviour
 {
-	//Variables player can change
+	//Variables player can change over time
 	[SerializeField] private int _speed;
 	[SerializeField] private int _visionRange;
 
 	//Common variables
-	private int _hunger;
-	public bool _inMemory;
+	public bool InMemory {get;set;}
+	public int Hunger { get; set;}
 
 	//Fighter variables
 	public int ArrowRange{ get; set;}
@@ -38,10 +38,8 @@ public class HexUnit : MonoBehaviour
 		}
 	}
 
-	const float rotationSpeed = 180f;
-	const float travelSpeed = 4f;
-
 	public HexMapCamera Camera {get; set;}
+	public HexGrid Grid { get; set; }
 
 	private UnitTypes _type;
 	public Color SelectedCol{get;private set;}
@@ -51,6 +49,7 @@ public class HexUnit : MonoBehaviour
 	public UnitData _data;
 	public static HexUnit unitPrefab;
 
+	#region Initilization
 	public UnitTypes Type
 	{
 		get
@@ -75,9 +74,6 @@ public class HexUnit : MonoBehaviour
 				_data = Grid.relicData;
 				FindObjectOfType<TurnManager> ().Relic = this;
 				break;
-			case UnitTypes.Enemy:
-				_data = Grid.enemyData;
-				break;
 			}
 			InitializeUnit ();
 		}
@@ -85,15 +81,18 @@ public class HexUnit : MonoBehaviour
 
 	private void InitializeUnit()
 	{
+		name = Type.ToString ();
 		Instantiate (_data.display, transform);
 		_speed = _data.speed;
 		_visionRange = _data.visionRange;
-		_hunger = _data.hunger;
+		Hunger = _data.hunger;
 		SelectedCol = _data.selectedColor;
 		_didActions = new bool[System.Enum.GetValues(typeof(ActionTypes)).Length];
 		ResetActionsDone ();
 	}
+	#endregion
 
+	#region Actions
 	public void ConsumeResource()
 	{
 		if(location.Resource > 0 && Type == UnitTypes.Producer)
@@ -121,15 +120,17 @@ public class HexUnit : MonoBehaviour
 		return true;
 	}
 
-	public HexGrid Grid { get; set; }
-
-	public int Hunger
-	{
-		get{
-			return _hunger;
+	public void Die () {
+		if (location) {
+			Grid.DecreaseVisibility(location, VisionRange);
 		}
+		location.Unit = null;
+		location.DisableHighlight ();
+		Destroy(gameObject);
 	}
+	#endregion
 
+	#region Movement
 	public HexCell Location {
 		get {
 			return location;
@@ -148,6 +149,9 @@ public class HexUnit : MonoBehaviour
 	}
 
 	HexCell location, currentTravelLocation;
+
+	const float rotationSpeed = 180f;
+	const float travelSpeed = 4f;
 
 	public float Orientation {
 		get {
@@ -280,6 +284,8 @@ public class HexUnit : MonoBehaviour
 		pathToTravel = null;
 
 		Camera.SetFollowedUnit (this);
+		if (_type == UnitTypes.Fighter && location.Enemy)
+			Grid.RemoveEnemy (location.Enemy);
 
 		//reset orientation for 2D sprites
 		Quaternion fromRotation = transform.localRotation;
@@ -362,16 +368,9 @@ public class HexUnit : MonoBehaviour
 		}
 		return moveCost;*/
 	}
-		
-	public void Die () {
-		if (location) {
-			Grid.DecreaseVisibility(location, VisionRange);
-		}
-		location.Unit = null;
-		location.DisableHighlight ();
-		Destroy(gameObject);
-	}
+	#endregion
 
+	#region Load/Save
 	public void Save (BinaryWriter writer) {
 		location.coordinates.Save(writer);
 		writer.Write(orientation);
@@ -398,6 +397,7 @@ public class HexUnit : MonoBehaviour
 
 		unit.SpeedLeft = reader.ReadByte ();
 	}
+	#endregion
 
 	void OnEnable () {
 		if (location) {

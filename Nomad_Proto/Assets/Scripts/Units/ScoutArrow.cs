@@ -30,7 +30,7 @@ public class ScoutArrow : MonoBehaviour
 			location = value;
 			value.Arrow = this;
 			Grid.IncreaseVisibility(value, Range);
-			transform.localPosition = value.Position;
+			transform.localPosition = value.Position + transform.localPosition;
 			transform.SetParent (value.transform);
 		}
 	}

@@ -21,5 +21,5 @@ public class UnitData : ScriptableObject
 
 public enum UnitTypes
 {
-	Relic, Fighter, Producer, Enemy
+	Relic, Fighter, Producer
 }

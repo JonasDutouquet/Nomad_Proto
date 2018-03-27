@@ -15,7 +15,7 @@ public class TurnManager : MonoBehaviour
 	[SerializeField] private ActionPointsUI _actionPointsUI;
 	[SerializeField] private Material _terrainMaterial;	//for forget mechanic
 	[SerializeField] private EndTurnUI _endTurnWarning;
-//	[SerializeField] private GameObject _pillarInfo;
+	[SerializeField] private InterTurnUI _interTurnInfo;
 	private int _pointsUsed = 0;
 	private ResourceManager _resMan;
 
@@ -104,16 +104,11 @@ public class TurnManager : MonoBehaviour
 
 	IEnumerator DoEndTurn(float delay)
 	{
-		//activate memory pillar
-		/*if(Relic.Location.Pillar)
-		{
-			Relic.Location.Pillar.Reveal ();
-
-			//UI
-//			_pillarInfo.SetActive (true);
-		}*/
+		_interTurnInfo.gameObject.SetActive (true);
 
 		yield return new WaitForSeconds (delay);
+
+		//_interTurnInfo.DisplayForgetting ();
 
 		//reset actions done for each unit
 		_grid.DistanceToRelic (Relic.Location);
@@ -123,7 +118,7 @@ public class TurnManager : MonoBehaviour
 			HexUnit unit = units [i];
 			unit.ResetActionsDone ();
 			unit.ConsumeResource ();
-			if (!unit._inMemory)
+			if (!unit.InMemory)
 			{
 				_grid.RemoveUnit (unit);
 			}
@@ -132,6 +127,21 @@ public class TurnManager : MonoBehaviour
 		SetActionPoints ();
 		_resMan.EndTurn ();
 		_grid.ClearArrows ();
+
+		yield return null;
+
+		_interTurnInfo.DisplayEnemiesTurn ();
+
+		//enemies turn
+		EnemyUnit[] enemies = _grid.GetEnemies ();
+		for(int y = 0 ; y < enemies.Length ; y++)
+		{
+			enemies[y].Move ();
+		}
+
+		yield return new WaitForSeconds (1f);
+
+		_interTurnInfo.gameObject.SetActive (false);
 	}
 
 	public void Save (BinaryWriter writer)

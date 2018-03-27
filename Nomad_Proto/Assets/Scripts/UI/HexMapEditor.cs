@@ -143,9 +143,10 @@ public class HexMapEditor : MonoBehaviour {
 				{
 					CreateUnit(UnitTypes.Producer);
 				}
-				else if (Input.GetKey(KeyCode.E))
+				else if (Input.GetKey(KeyCode.B))
 				{
-					CreateUnit(UnitTypes.Enemy);
+					//CreateUnit(UnitTypes.Enemy);
+					CreateEnemy ();
 				}
 				return;
 			}
@@ -171,6 +172,15 @@ public class HexMapEditor : MonoBehaviour {
 	HexCell GetCellUnderCursor () {
 		return
 			hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+	}
+
+	void CreateEnemy()
+	{
+		HexCell cell = GetCellUnderCursor();
+		if (cell && !cell.Enemy)
+		{
+			hexGrid.AddEnemy(Instantiate(EnemyUnit.enemyPrefab), cell);
+		}
 	}
 
 	void CreatePillar()
@@ -220,6 +230,10 @@ public class HexMapEditor : MonoBehaviour {
 		HexCell cell = GetCellUnderCursor();
 		if (cell && cell.Unit) {
 			hexGrid.RemoveUnit(cell.Unit);
+		}
+		else if (cell && cell.Enemy)
+		{
+			hexGrid.RemoveEnemy (cell.Enemy);
 		}
 	}
 

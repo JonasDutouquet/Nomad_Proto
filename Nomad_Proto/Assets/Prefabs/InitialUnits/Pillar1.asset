@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e0142d137be14a9c92a16ce4d6c8987, type: 3}
   m_Name: Pillar1
   m_EditorClassIdentifier: 
-  isUnit: 0
+  initType: 1
   type: 0
   X: 20
   Z: 12
